@@ -11,7 +11,6 @@ public class TodoListPageUnitTests : IDisposable
 {
     private readonly TestContext _testContext;
     private Mock<ITodoService> _mockTodos;
-    private readonly IRenderedComponent<TodoList> _page;
     private readonly List<Todo> _todos = new()
     {
         new() { Title = "Prepare presentation" },
@@ -24,37 +23,39 @@ public class TodoListPageUnitTests : IDisposable
         _testContext = new TestContext();
         _mockTodos = new();
         _todos[0].MarkComplete();
-
-        _mockTodos.Setup(s => s.GetTodosAsync()).ReturnsAsync(_todos);
-
         _testContext.Services.AddSingleton(_mockTodos.Object);
-        _page = _testContext.RenderComponent<TodoList>();
     }
 
     public void Dispose()
     {
-        _page.Dispose();
         _testContext.Dispose();
     }
 
     [Fact]
-    public void PageInstance_ShouldLoadAllTodos_WhenPageLoaded()
-    {
-        var todos = _page.Instance.Todos;
-
-        todos.Should().BeEquivalentTo(_todos);
-    }
-
-    [Fact]
-    public async void ShowIncompleteTodos_ShouldLoadOnlyIncompleteViews_WhenCalled()
+    public void PageInstance_ShouldLoadOnlyIncompleteTodos_WhenPageLoaded()
     {
         _mockTodos.Setup(t => t.GetIncompleteTodosAsync())
             .ReturnsAsync(_todos.Where(t => !t.IsComplete));
+        var page = _testContext.RenderComponent<TodoList>();
         
-        await _page.Instance.ShowInCompleteTodos();
-        var todos = _page.Instance.Todos;
+        var todos = page.Instance.Todos;
 
+        _mockTodos.Verify(x => x.GetIncompleteTodosAsync(), Times.Once);
         todos.Should().NotBeEmpty()
             .And.NotContain(t => t.IsComplete);
+    }
+
+    [Fact]
+    public async void ShowAllTodos_ShouldLoadAllTodos_WhenCalled()
+    {
+        _mockTodos.Setup(t => t.GetTodosAsync())
+            .ReturnsAsync(_todos);
+        var page = _testContext.RenderComponent<TodoList>();
+        
+        await page.Instance.ShowAllTodos();
+        var todos = page.Instance.Todos;
+
+        _mockTodos.Verify(m => m.GetTodosAsync(), Times.Once);
+        todos.Should().BeEquivalentTo(_todos);
     }
 }
