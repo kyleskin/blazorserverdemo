@@ -1,3 +1,4 @@
+using System.Collections;
 using BlazorServerDemo.Exceptions;
 using BlazorServerDemo.Models;
 using BlazorServerDemo.Repositories;
@@ -23,5 +24,11 @@ public class TodoService : ITodoService
             throw new InvalidTodoException("ID does not correspond to a valid ToDo");
 
         return todo;
+    }
+
+    public async Task<IEnumerable<Todo>> GetIncompleteTodosAsync()
+    {
+        var todos = await _repository.GetTodosAsync();
+        return todos.Where(t => !t.IsComplete);
     }
 }

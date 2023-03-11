@@ -63,4 +63,22 @@ public class TodoServiceUnitTests
         // Assert
         await action.Should().ThrowAsync<InvalidTodoException>();
     }
+
+    [Fact]
+    public async void GetIncompleteTodos_ShouldReturnOnlyIncompleteTodos_WhenCalled()
+    {
+        // Arrange
+        var mockRepo = new Mock<ITodoRepository>();
+        mockRepo.Setup(m => m.GetTodosAsync()).ReturnsAsync(_todos);
+        _todos[0].MarkComplete();
+        var sut = new TodoService(mockRepo.Object);
+        
+        // Act
+        var todos = await sut.GetIncompleteTodosAsync();
+
+        // Assert
+        todos.Should().NotBeEmpty()
+            .And.HaveCount(2)
+            .And.NotContain(t => t.IsComplete);
+    }
 }
