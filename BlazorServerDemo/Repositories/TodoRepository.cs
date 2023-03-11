@@ -1,3 +1,4 @@
+using BlazorServerDemo.Exceptions;
 using BlazorServerDemo.Models;
 
 namespace BlazorServerDemo.Repositories;
