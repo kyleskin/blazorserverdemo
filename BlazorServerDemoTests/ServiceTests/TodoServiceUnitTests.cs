@@ -4,7 +4,7 @@ using BlazorServerDemo.Repositories;
 using BlazorServerDemo.Services;
 using FluentAssertions;
 
-namespace BlazorServerDemoTests.TodoServiceTests;
+namespace BlazorServerDemoTests.ServiceTests;
 
 public class TodoServiceUnitTests
 {

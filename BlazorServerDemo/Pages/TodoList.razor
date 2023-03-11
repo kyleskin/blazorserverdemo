@@ -1,6 +1,26 @@
 @page "/TodoList"
+@using BlazorServerDemo.Models
+@using System.Collections
+@using BlazorServerDemo.Services
 <h3>TodoList</h3>
 
 @code {
+
+    [Inject]
+    private ITodoService TodoService { get; set; } = null!;
     
+    public IEnumerable<Todo> Todos { get; private set; } = Enumerable.Empty<Todo>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Todos = await TodoService.GetTodosAsync();
+    }
+
+    public async Task ShowInCompleteTodos()
+    {
+        Todos = await TodoService.GetIncompleteTodosAsync();
+    }
 }
+
