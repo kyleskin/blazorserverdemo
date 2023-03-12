@@ -22,12 +22,12 @@ public class TodoListPageUnitTests
     }
     
     [Fact]
-    public void PageInstance_ShouldLoadOnlyIncompleteTodos_WhenPageLoaded()
+    public void PageInstance_ShouldLoadOnlyInProgressTodos_WhenPageLoaded()
     {
         // Arrange
         var mockTodos = new Mock<ITodoService>();
-        mockTodos.Setup(t => t.GetIncompleteTodosAsync())
-            .ReturnsAsync(_todos.Where(t => !t.IsComplete));
+        mockTodos.Setup(t => t.GetInProgressTodosAsync())
+                 .ReturnsAsync(_todos.Where(t => !t.IsInProgress));
         
         using var ctx = new TestContext();
         ctx.Services.AddSingleton(mockTodos.Object);
@@ -37,9 +37,9 @@ public class TodoListPageUnitTests
         var todos = cut.Instance.Todos;
 
         // Assert
-        mockTodos.Verify(x => x.GetIncompleteTodosAsync(), Times.Once);
+        mockTodos.Verify(x => x.GetInProgressTodosAsync(), Times.Once);
         todos.Should().NotBeEmpty()
-             .And.NotContain(t => t.IsComplete);
+             .And.NotContain(t => t.IsInProgress);
     }
 
     [Fact]
@@ -61,5 +61,18 @@ public class TodoListPageUnitTests
         // Assert
         mockTodos.Verify(m => m.GetTodosAsync(), Times.Once);
         todos.Should().BeEquivalentTo(_todos);
+    }
+
+    [Fact]
+    public void PageView_ShouldHaveTableWithInProgressTodos_WhenPageLoads()
+    {
+        // Arrange
+
+
+        // Act
+
+
+        // Assert
+
     }
 }

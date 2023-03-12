@@ -4,18 +4,26 @@
 @using BlazorServerDemo.Services
 <h3>TodoList</h3>
 
+<table>
+    <tr>
+        <th>Done</th>
+        <th>Title</th>
+        <th>Description</th>
+    </tr>
+</table>
+
 @code {
 
     [Inject]
     private ITodoService TodoService { get; set; } = null!;
     
-    public IEnumerable<Todo> Todos { get; set; }
+    public IEnumerable<Todo>? Todos { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
+        // await base.OnInitializedAsync();
 
-        Todos = await TodoService.GetIncompleteTodosAsync();
+        Todos = await TodoService.GetInProgressTodosAsync();
     }
 
     public async Task ShowAllTodos()

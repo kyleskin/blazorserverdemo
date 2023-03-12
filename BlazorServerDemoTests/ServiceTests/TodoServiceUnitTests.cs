@@ -14,6 +14,11 @@ public class TodoServiceUnitTests
         new() { Title = "Commit changes" },
         new() { Title = "Log time" }
     };
+
+    public TodoServiceUnitTests()
+    {
+        _todos[0].MarkComplete();
+    }
     
     [Fact]
     public async void GetTodosAsync_ShouldReturnAllTodos_WhenCalled()
@@ -65,20 +70,19 @@ public class TodoServiceUnitTests
     }
 
     [Fact]
-    public async void GetIncompleteTodos_ShouldReturnOnlyIncompleteTodos_WhenCalled()
+    public async void GetInProgressTodos_ShouldReturnOnlyInProgressTodos_WhenCalled()
     {
         // Arrange
         var mockRepo = new Mock<ITodoRepository>();
         mockRepo.Setup(m => m.GetTodosAsync()).ReturnsAsync(_todos);
-        _todos[0].MarkComplete();
         var sut = new TodoService(mockRepo.Object);
         
         // Act
-        var todos = await sut.GetIncompleteTodosAsync();
+        var todos = await sut.GetInProgressTodosAsync();
 
         // Assert
         todos.Should().NotBeEmpty()
             .And.HaveCount(2)
-            .And.NotContain(t => t.IsComplete);
+            .And.NotContain(t => !t.IsInProgress);
     }
 }

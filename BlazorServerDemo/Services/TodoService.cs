@@ -26,9 +26,9 @@ public class TodoService : ITodoService
         return todo;
     }
 
-    public async Task<IEnumerable<Todo>> GetIncompleteTodosAsync()
+    public async Task<IEnumerable<Todo>> GetInProgressTodosAsync()
     {
         var todos = await _repository.GetTodosAsync();
-        return todos.Where(t => !t.IsComplete);
+        return todos.Where(t => t.IsInProgress);
     }
 }
