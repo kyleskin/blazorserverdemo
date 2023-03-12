@@ -2,17 +2,17 @@ namespace BlazorServerDemo.Models;
 
 public class Todo
 {
-    public TodoId Id { get; init; } = new TodoId(new Guid());
+    public TodoId Id { get; } = new(new Guid());
     public required string Title { get; set; }
-    public bool IsComplete { get; private set; } = false;
+    public bool IsInProgress { get; private set; } = true;
 
     public void MarkComplete()
     {
-        IsComplete = true;
+        IsInProgress = false;
     }
 
     public void MarkIncomplete()
     {
-        IsComplete = false;
+        IsInProgress = true;
     }
 }
