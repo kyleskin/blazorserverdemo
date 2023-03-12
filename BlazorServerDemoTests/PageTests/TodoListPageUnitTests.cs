@@ -1,3 +1,4 @@
+using BlazorServerDemo.Components;
 using BlazorServerDemo.Models;
 using BlazorServerDemo.Pages;
 using BlazorServerDemo.Services;
@@ -20,14 +21,14 @@ public class TodoListPageUnitTests
     {
         _todos[0].MarkComplete();
     }
-    
+
     [Fact]
     public void PageInstance_ShouldLoadOnlyInProgressTodos_WhenPageLoaded()
     {
         // Arrange
         var mockTodos = new Mock<ITodoService>();
         mockTodos.Setup(t => t.GetInProgressTodosAsync())
-                 .ReturnsAsync(_todos.Where(t => !t.IsInProgress));
+                 .ReturnsAsync(_todos.Where(t => t.IsInProgress));
         
         using var ctx = new TestContext();
         ctx.Services.AddSingleton(mockTodos.Object);
@@ -39,7 +40,7 @@ public class TodoListPageUnitTests
         // Assert
         mockTodos.Verify(x => x.GetInProgressTodosAsync(), Times.Once);
         todos.Should().NotBeEmpty()
-             .And.NotContain(t => t.IsInProgress);
+             .And.NotContain(t => !t.IsInProgress);
     }
 
     [Fact]
@@ -67,12 +68,40 @@ public class TodoListPageUnitTests
     public void PageView_ShouldHaveTableWithInProgressTodos_WhenPageLoads()
     {
         // Arrange
+        var mockTodos = new Mock<ITodoService>();
+        mockTodos.Setup(t => t.GetInProgressTodosAsync())
+            .ReturnsAsync(_todos.Where(t => t.IsInProgress));
 
+        using var ctx = new TestContext();
+        ctx.Services.AddSingleton(mockTodos.Object);
+        var cut = ctx.RenderComponent<TodoList>();
 
         // Act
-
+        var todos = cut.FindComponents<TodoComponent>();
 
         // Assert
+        todos.Should().HaveCount(2);
 
+    }
+
+    [Fact]
+    public void OnShowAllTodosClicked_ShouldDisplayAllTodos_WhenClicked()
+    {
+        // Arrange
+        var mockTodos = new Mock<ITodoService>();
+        mockTodos.Setup(t => t.GetTodosAsync())
+            .ReturnsAsync(_todos);
+
+        using var ctx = new TestContext();
+        ctx.Services.AddSingleton(mockTodos.Object);
+        var cut = ctx.RenderComponent<TodoList>();
+
+        // Act
+        cut.Find("button").Click();
+        var todos = cut.FindComponents<TodoComponent>(); 
+        
+        // Assert
+        mockTodos.Verify(m => m.GetTodosAsync(), Times.Once);
+        todos.Should().HaveCount(3);
     }
 }

@@ -16,4 +16,9 @@ public class TodoRepository : ITodoRepository
         new Todo { Title = "Commit changes" },
         new Todo { Title = "Log time" }
     };
+
+    public TodoRepository()
+    {
+        _todos[0].MarkComplete();
+    }
 }
