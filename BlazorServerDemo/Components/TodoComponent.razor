@@ -1,5 +1,18 @@
-<h3>This is a todo</h3>
+@using BlazorServerDemo.Models
+@using System.Text.Encodings.Web
+
+<tr>
+    <td>
+        <input type="checkbox" checked="@(!Todo.IsInProgress)" />
+    </td>
+    <td>
+        @Todo.Title
+    </td>
+</tr>
 
 @code {
-    
+
+    [Parameter]
+    public Todo Todo { get; set; } = null!;
+
 }

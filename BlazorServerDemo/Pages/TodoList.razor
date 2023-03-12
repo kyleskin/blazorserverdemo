@@ -9,12 +9,11 @@
     <tr>
         <th>Done</th>
         <th>Title</th>
-        <th>Description</th>
     </tr>
     <tbody>
         @foreach (var todo in Todos)
         {
-            <TodoComponent></TodoComponent>
+            <TodoComponent Todo="todo"></TodoComponent>
         }
     </tbody>
 </table>

@@ -68,7 +68,7 @@ public class TodoServiceUnitTests
         // Assert
         await action.Should().ThrowAsync<InvalidTodoException>();
     }
-
+    
     [Fact]
     public async void GetInProgressTodos_ShouldReturnOnlyInProgressTodos_WhenCalled()
     {

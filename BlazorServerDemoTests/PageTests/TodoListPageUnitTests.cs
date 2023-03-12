@@ -83,6 +83,26 @@ public class TodoListPageUnitTests
         todos.Should().HaveCount(2);
 
     }
+    
+    [Fact]
+    public void ShowAllTodosButton_ShouldRender_WhenPageLoads()
+    {
+        // Arrange
+        var mockTodos = new Mock<ITodoService>();
+        mockTodos.Setup(t => t.GetTodosAsync())
+            .ReturnsAsync(_todos);
+        
+        using var ctx = new TestContext();
+        ctx.Services.AddSingleton(mockTodos.Object);
+        var cut = ctx.RenderComponent<TodoList>();
+
+        // Act
+        var button = cut.Find("button");
+
+        // Assert
+        button.InnerHtml.Should().Be("Show All Todos");
+        button.MarkupMatches("<button>Show All Todos</button>");
+    }
 
     [Fact]
     public void OnShowAllTodosClicked_ShouldDisplayAllTodos_WhenClicked()
@@ -98,7 +118,7 @@ public class TodoListPageUnitTests
 
         // Act
         cut.Find("button").Click();
-        var todos = cut.FindComponents<TodoComponent>(); 
+        var todos = cut.FindComponents<TodoComponent>();
         
         // Assert
         mockTodos.Verify(m => m.GetTodosAsync(), Times.Once);
